@@ -24,11 +24,11 @@ function Main() {
    function ourReducer() { 
       switch(action.type) { 
          case 'login':
-            return x 
+            return {loggedIn: true, flashMessages: state.flashMessages}
          case 'logout':
-            return x
+            return {loggedIn: false, flashMessages: state.flashMessages}
          case 'flashMessage': 
-            return x
+            return {loggedIn: state.loggedIn, flashMessages: state.flashMessages.concat(action.value)}
       }
    }
 
