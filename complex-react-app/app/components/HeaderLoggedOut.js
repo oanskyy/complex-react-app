@@ -2,17 +2,20 @@ import React, { useEffect, useState } from "react"
 import Axios from "axios"
 
 function HeaderLoggedOut(props) {
+  // Set up a piece of state to store the username and pass
   const [username, setUsername] = useState()
   const [password, setPassword] = useState()
 
   async function handleSubmit(e) {
     e.preventDefault()
     try {
+      // if we use the await feature, we have to be in an async function
       const response = await Axios.post("/login", {
         username,
         password
       })
       if (response.data) {
+        // SAVE/STORE(PERSIST) items(res.data) to the browser's localStorage so we can ACCESS them later
         localStorage.setItem("complexappToken", response.data.token)
         localStorage.setItem("complexappUsername", response.data.username)
         localStorage.setItem("complexappAvatar", response.data.avatar)

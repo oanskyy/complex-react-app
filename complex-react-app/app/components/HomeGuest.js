@@ -8,14 +8,27 @@ function HomeGuest() {
   const [email, setEmail] = useState()
   const [password, setPassword] = useState()
 
-  async function handleSubmit(e) { 
-      e.preventDefault() 
-          try { 
-              await Axios.post("/register", {username, email, password}) 
-              console.log("User was successfully created.") 
-          } catch(e) { 
-              console.log("there was an error.")
-          }
+  // async function handleSubmit(e) { 
+  //     e.preventDefault() 
+  //         try { 
+  //             await Axios.post("/register", {username, email, password}) 
+  //             console.log("User was successfully created.") 
+  //         } catch(e) { 
+  //             console.log("there was an error.")
+  //         }
+  // }
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    try {
+      // tool: fetch; but I will use a library called Axios
+      // 2nd param: data that we want to send to browser
+      // this req is async action
+      await Axios.post("http://localhost:8080/register", { username, email, password })
+      console.log("User was successfully created.")
+    } catch (e) {
+      console.log(e.response.data)
+    }
   }
 
   return ( 
