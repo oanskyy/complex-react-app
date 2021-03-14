@@ -6,7 +6,6 @@ import StateContext from "../StateContext"
 import ProfilePosts from "./ProfilePosts"
 
 function Profile() {
-  // destructuring the obj that it gives us and we are only interested in the username prop
   const { username } = useParams()
   const appState = useContext(StateContext)
   const [profileData, setProfileData] = useState({

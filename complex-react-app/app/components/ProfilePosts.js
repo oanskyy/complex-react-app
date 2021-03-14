@@ -2,14 +2,11 @@ import React, { useEffect, useState } from "react"
 import Axios from "axios"
 import { useParams, Link } from "react-router-dom"
 
-function ProfilePosts() {
+function ProfilePosts(props) {
   const { username } = useParams()
   const [isLoading, setIsLoading] = useState(true)
   const [posts, setPosts] = useState([])
-  
 
-  // send a request to the BEnd with useEffect()
-  // you cannpt pass useEffect() an async function directly
   useEffect(() => {
     async function fetchPosts() {
       try {
@@ -17,7 +14,7 @@ function ProfilePosts() {
         setPosts(response.data)
         setIsLoading(false)
       } catch (e) {
-        console.log("problem")
+        console.log("There was a problem.")
       }
     }
     fetchPosts()
@@ -29,7 +26,9 @@ function ProfilePosts() {
     <div className="list-group">
       {posts.map(post => {
         const date = new Date(post.createdDate)
-        const dateFormatted = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullyear()}`
+        const dateFormatted = `${
+          date.getMonth() + 1
+        }/${date.getDate()}/${date.getFullYear()}`
 
         return (
           <Link
@@ -39,7 +38,7 @@ function ProfilePosts() {
           >
             <img className="avatar-tiny" src={post.author.avatar} />{" "}
             <strong>{post.title}</strong>{" "}
-            <span className="text-muted small">on {dateFormatted}</span>
+            <span className="text-muted small">on {dateFormatted} </span>
           </Link>
         )
       })}
