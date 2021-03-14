@@ -19,10 +19,10 @@ function HeaderLoggedOut(props) {
       })
       if (response.data) {
         // SAVE/STORE(PERSIST) items(res.data) to the browser's localStorage so we can ACCESS them later
-        localStorage.setItem("complexappToken", response.data.token)
+        /*localStorage.setItem("complexappToken", response.data.token)
         localStorage.setItem("complexappUsername", response.data.username)
-        localStorage.setItem("complexappAvatar", response.data.avatar)
-        appDispatch({type: "login"})
+        localStorage.setItem("complexappAvatar", response.data.avatar)*/
+        appDispatch({type: "login", data: response.data})
         // setLoggedIn(true)
       } else {
         console.log("Incorrect username / password.")
