@@ -1,15 +1,40 @@
 import React, { useEffect, useState } from "react"
+import {useImmerReducer} from 'use-immer'
 import Page from "./Page"
 import { useParams, Link } from "react-router-dom"
 import Axios from "axios"
 import LoadingDotsIcon from "./LoadingDotsIcon"
-import ReactMarkdown from "react-markdown"
-import ReactTooltip from "react-tooltip"
 
 function EditPost() {
-  const { id } = useParams()
-  const [isLoading, setIsLoading] = useState(true)
-  const [post, setPost] = useState()
+  const originalState = {
+    title: {
+      value: "", 
+      hasErrors: false, 
+      message: ""
+    }, 
+    body: { 
+      value: "", 
+      hasErrors: false, 
+      message: ""
+    }, 
+    isFetching: true, 
+    isSaving: false, 
+    id: useParams().id,
+    sendCount: 0
+  }
+
+  function ourReducer(draft, action) { 
+    switch(action.type) { 
+      case "fetchComplete": 
+        draft.title.value = action.value.title
+        draft.body.value = action.value.body
+        draft.isFetching = false 
+        return
+    }
+
+  }
+  const [state, dispatch] = useImmerReducer(ourReducer, originalState) 
+
 
   useEffect(() => {
     const ourRequest = Axios.CancelToken.source()
@@ -19,8 +44,7 @@ function EditPost() {
         const response = await Axios.get(`/post/${id}`, {
           cancelToken: ourRequest.token
         })
-        setPost(response.data)
-        setIsLoading(false)
+        dispatch({type: "fetchComplete", value: response.data})
       } catch (e) {
         console.log("problem")
       }
