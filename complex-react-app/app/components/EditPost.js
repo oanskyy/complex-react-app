@@ -5,9 +5,11 @@ import { useParams, Link } from "react-router-dom"
 import Axios from "axios"
 import LoadingDotsIcon from "./LoadingDotsIcon"
 import StateContext from "../StateContext"
+import DispatchContext from "../DispatchContext"
 
 function EditPost() {
   const appState = useContext(StateContext)
+  const appDispatch = useContext(DispatchContext)
 
   const originalState = {
     title: {
@@ -95,6 +97,7 @@ function EditPost() {
             }
           )
           dispatch({ type: "saveRequestFinished" })
+          appDispatch({ type: "flashMessage", value: "Post was updated" })
         } catch (e) {
           console.log("problem")
         }
@@ -151,7 +154,9 @@ function EditPost() {
           />
         </div>
 
-        <button className="btn btn-primary" disabled={state.isSaving}>Save Updates</button>
+        <button className="btn btn-primary" disabled={state.isSaving}>
+          Save Updates
+        </button>
       </form>
     </Page>
   )
