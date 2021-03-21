@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import Page from "./Page"
 import Axios from "axios"
 import { useImmerReducer } from "use-immer"
@@ -37,14 +37,32 @@ function HomeGuest() {
           draft.username.hasErrors = true
           draft.username.message = "Username cannot exceed 30 characters."
         }
-        if(draft.username.value && !/^([a_zA_Z0_9]+)$/.test(draft.username.value)) { 
-          draft.username.hasErrors=true
-          draft.username.message = "Username can only contain letters and numbers."
+        if (
+          draft.username.value &&
+          !/^([a-zA-Z0-9]+)$/.test(draft.username.value)
+        ) {
+          draft.username.hasErrors = true
+          draft.username.message =
+            "Username can only contain letters and numbers."
         }
         return
       case "usernameAfterDelay":
+        if (draft.username.value.length < 3) {
+          draft.username.hasErrors = true
+          draft.username.message = "Username must be at least 3 characters"
+        }
+        if (!draft.hasErrors) {
+          draft.username.checkCount++
+        }
         return
       case "usernameUniqueResults":
+        if (action.value) {
+          draft.username.hasErrors = true
+          draft.username.isUnique = false
+          draft.username.message = "That username is already taken"
+        } else {
+          draft.username.isUnique = true
+        }
         return
       case "emailImmediately":
         draft.email.hasErrors = false
@@ -66,6 +84,36 @@ function HomeGuest() {
   }
 
   const [state, dispatch] = useImmerReducer(ourReducer, initialState)
+
+  useEffect(() => {
+    if (state.username.value) {
+      const delay = setTimeout(
+        () => dispatch({ type: "usernameAfterDelay" }),
+        800
+      )
+      return () => clearTimeout(delay)
+    }
+  }, [state.username.value])
+
+  useEffect(() => {
+    if (state.username.checkCount) {
+      const ourRequest = Axios.CancelToken.source()
+      async function fetchResults() {
+        try {
+          const response = await Axios.post(
+            "/doesUsernameExist",
+            { username: state.username.value },
+            { cancelToken: ourRequest }
+          )
+          dispatch({ type: "usernameUniqueResults", value: response.data })
+        } catch (e) {
+          console.log(`%cThere was a problem`, "font-size: 1.5rem")
+        }
+      }
+      fetchResults()
+      return () => ourRequest.cancel()
+    }
+  }, [state.username.checkCount])
 
   function handleSubmit(e) {
     e.preventDefault()
